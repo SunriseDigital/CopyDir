@@ -52,13 +52,13 @@ Options:
         }
       }
 
-
-
+      var skipCount = 0;
       var sourceDir = "";
       var destDir = "";
       if(HasSourceDir)
       {
-        if (argList.Count < 2)
+        skipCount = 2;
+        if (argList.Count < skipCount)
         {
           Console.WriteLine(usage);
           return;
@@ -69,7 +69,8 @@ Options:
       }
       else
       {
-        if (argList.Count < 1)
+        skipCount = 1;
+        if (argList.Count < skipCount)
         {
           Console.WriteLine(usage);
           return;
@@ -79,6 +80,11 @@ Options:
         destDir = argList[0];
       }
 
+      if (sourceDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
+      {
+        sourceDir = sourceDir.Substring(0, sourceDir.Length - 1);
+      }
+
       if(destDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
       {
         destDir = destDir.Substring(0, destDir.Length - 1);
@@ -86,9 +92,9 @@ Options:
 
       var patterns = new List<Regex>();
       var files = new List<string>();
-      if(argList.Count > 1)
+      if (argList.Count > skipCount)
       {
-        var targets = argList.Skip(1);
+        var targets = argList.Skip(skipCount);
         if(IsRegex)
         {
           var pathSep = Path.DirectorySeparatorChar.ToString();
@@ -132,7 +138,6 @@ Options:
         var isCopied = false;
         var destFile = sourceFile.Replace(from, to);
         var relativeSourceFile = sourceFile.Replace(from + Path.DirectorySeparatorChar, "");
-
         foreach (var file in files)
         {
           if (relativeSourceFile == file)
