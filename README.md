@@ -15,6 +15,7 @@ Options:
   -d dry run.
   -r use regex for files.
   -f force over write.
+  -s specify source dir. if not use this option, the source dir is current dir.
 ```
 
 コピー元は常にカレントディレクトリになります。コピー先ディレクトリを第一引数に指定します。コピーするファイルを限定したい場合は２番目以降の引数に指定します。この時、filesはコピー元ディレクトリからの相対パスで指定してください。filesのディレクトリ区切り文字は`\`でも`/`でも可能です（`/`は`¥`に置換されます）。
