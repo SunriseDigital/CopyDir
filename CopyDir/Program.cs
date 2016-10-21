@@ -13,15 +13,18 @@ namespace CopyDir
     private static bool IsDryRun = false;
     private static bool IsRegex = false;
     private static bool IsForceOverWrite = false;
+    private static bool HasSourceDir = false;
     private static int copyCount = 0;
     static void Main(string[] args)
     {
       var usage = @"usage: CopyDir.exe destinationDir [files ...]
+       CopyDir.exe sourceDir destinationDir [files ...]
 The source directory is current dir. You can use stdin for files. Specified files by relative path from current dir.
 Options:
   -d dry run.
   -r use regex for files.
   -f force over write.
+  -s specify source dir. if not use this option, the source dir is current dir.
 ";
 
       var argList = new List<string>();
@@ -39,21 +42,43 @@ Options:
         {
           IsForceOverWrite = true;
         }
+        else if (arg == "-s")
+        {
+          HasSourceDir = true;
+        }
         else
         {
           argList.Add(arg);
         }
       }
 
-      if (argList.Count < 1)
+
+
+      var sourceDir = "";
+      var destDir = "";
+      if(HasSourceDir)
       {
-        Console.WriteLine(usage);
-        return;
+        if (argList.Count < 2)
+        {
+          Console.WriteLine(usage);
+          return;
+        }
+
+        sourceDir = argList[0];
+        destDir = argList[1];
+      }
+      else
+      {
+        if (argList.Count < 1)
+        {
+          Console.WriteLine(usage);
+          return;
+        }
+
+        sourceDir = Directory.GetCurrentDirectory();
+        destDir = argList[0];
       }
 
-
-      var sourceDir = Directory.GetCurrentDirectory();
-      var destDir = argList[0];
       if(destDir.EndsWith(Path.DirectorySeparatorChar.ToString()))
       {
         destDir = destDir.Substring(0, destDir.Length - 1);
