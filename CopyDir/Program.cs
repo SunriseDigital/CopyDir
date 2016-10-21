@@ -12,6 +12,7 @@ namespace CopyDir
   {
     private static bool IsDryRun = false;
     private static bool IsRegex = false;
+    private static bool IsForceOverWrite = false;
     private static int copyCount = 0;
     static void Main(string[] args)
     {
@@ -20,6 +21,7 @@ The source directory is current dir. You can use stdin for files. Specified file
 Options:
   -d dry run.
   -r use regex for files.
+  -f force over write.
 ";
 
       var argList = new List<string>();
@@ -32,6 +34,10 @@ Options:
         else if (arg == "-r")
         {
           IsRegex = true;
+        }
+        else if (arg == "-f")
+        {
+          IsForceOverWrite = true;
         }
         else
         {
@@ -142,7 +148,7 @@ Options:
 
     private static void CopyFiles(string sourceFile, string destFile)
     {
-      if (File.Exists(destFile))
+      if (!IsForceOverWrite && File.Exists(destFile))
       {
         Console.WriteLine("Already exists " + destFile);
         return;
@@ -156,7 +162,7 @@ Options:
           Directory.CreateDirectory(dir);
         }
 
-        File.Copy(sourceFile, destFile);
+        File.Copy(sourceFile, destFile, IsForceOverWrite);
       }
       
       Console.WriteLine(sourceFile + " > " + destFile);
